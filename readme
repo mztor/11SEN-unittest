@@ -1,0 +1,88 @@
+Create and use unit tests to determine the effectiveness and repeatability of each component’s control algorithm
+Using the simulators Arduino/C++ (Wokwi simulation) and Pico/Python (Wokwi simulation), students will be able to replicate the behaviour of the hardware without the need for physical components. Manual testing may be necessary, especially for aspects that are challenging to simulate or for hardware interactions that depend on the physical properties of the components.
+Unit testing is where individual units or components of a program are tested in isolation. The goal is to verify that each unit of the software performs as designed.
+A ‘unit’ refers to the smallest testable part of a program, typically a function or method.
+Unit testing is crucial in software engineering because it:
+•	allows developers to catch and fix bugs early in the development process
+•	helps ensure code quality
+•	provides a safety net when making changes to the code.
+Steps to create a unit test:
+1.	Isolate components: unit tests focus on testing individual components (functions, methods or classes) in isolation. This means that each unit test should only be concerned with the behaviour of one specific part of the code.
+2.	Write test cases: for each component, write test cases that check whether the component behaves as expected under different conditions.
+3.	These test cases typically include input values, the expected output, and any other relevant conditions.
+4.	Run tests: A testing framework (for example, unittest in Python, or ArduinoUnit for Arduino) can be used to automate the process of running the tests. The testing framework executes each test case and reports whether it passes or fails.
+5.	Include assertions: inside each test case include assertions (statements that check whether a given condition is true at a particular point in the code). These verify that the actual output of the component matches the expected output. If the assertions fail, it indicates that there might be a bug or unintended behaviour in the code.
+Unit tests should be repeatable, meaning they should produce the same results every time they are run. Automating unit tests allows for frequent and consistent testing during development.
+Unit testing – samples
+Study the example below in Python that uses the built-in unittest module.
+Predict, Run, Investigate, Modify and Make other examples.
+In this code the add function is being tested with 2 test cases.
+The unittest framework executes the tests and checks whether the actual results match the expected results.
+import unittest
+
+def add(a, b):
+    return a + b
+
+class TestAddFunction(unittest.TestCase):
+    def test_add_positive_numbers(self):
+        result = add(2, 3)
+        self.assertEqual(result, 5)
+
+    def test_add_negative_numbers(self):
+        result = add(-2, -3)
+        self.assertEqual(result, -5)
+
+if __name__ == '__main__':
+    unittest.main()
+To use unit tests for the Arduino code above, break down the code into testable units and then write tests for each unit.
+The Arduino platform does not have built-in support for unit testing. A testing framework like ArduinoUnit can be used or students could create their own testing mechanism.
+A simplified example of how to structure the above code for testing:
+#include <ArduinoUnit.h>
+// Include the original code here
+// Define a test fixture
+test(ArmControlTests) {
+  // Test the move function
+  Setpoint start = {0, 0, 0};
+  Setpoint end = {90, 90, 90};
+  move(start, end);
+  // Add assertions to check if servos moved correctly
+  // Test the potentiometerPoint function
+  Setpoint point = potentiometerPoint();
+  // Add assertions to check if the potentiometer values are within expected range
+  // Add more tests for other functions if needed
+}
+// Run the tests
+void setup() {
+  Serial.begin(9600);
+  runAllTests();
+}
+void loop() {
+  // Empty, as we only want to run tests in setup
+}
+To perform unit testing in Python, you could use a testing framework such as unittest. An example of how to structure the code for testing the control algorithm and using a simple test case for the move function is below:
+import unittest
+from unittest.mock import Mock
+from your_module import move, Setpoint, potentiometerPoint, reset, beep
+class TestArmControl(unittest.TestCase):
+    def setUp(self):
+        # Set up mock objects or any necessary initialization
+        self.servo1 = Mock()
+        self.servo2 = Mock()
+        self.servo3 = Mock()
+        self.pot1 = Mock()
+        self.pot2 = Mock()
+        self.pot3 = Mock()
+    def test_move_function(self):
+        # Arrange
+        start = Setpoint(0, 0, 0)
+        end = Setpoint(90, 90, 90)
+        # Act
+        move(self.servo1, self.servo2, self.servo3, start, end, numSteps=10, seconds=0.1)
+        # Assert
+        self.servo1.duty_u16.assert_called()
+        self.servo2.duty_u16.assert_called()
+        self.servo3.duty_u16.assert_called()
+    # Add more test cases for other functions as needed
+if __name__ == '__main__':
+    unittest.main()
+
